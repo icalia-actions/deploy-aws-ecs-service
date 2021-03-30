@@ -42,4 +42,6 @@ services:
     command: vscode-wait # Éste comando está definido en `bin/dev-entrypoint`
 
     environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       GIT_EDITOR: code
