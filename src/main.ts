@@ -19,7 +19,4 @@ async function run(): Promise<void> {
   }
 }
 
-async function cleanup(): Promise<void> {
-}
-
 run();

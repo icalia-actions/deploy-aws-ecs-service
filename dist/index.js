@@ -55,10 +55,6 @@ function run() {
         }
     });
 }
-function cleanup() {
-    return __awaiter(this, void 0, void 0, function* () {
-    });
-}
 run();
 //# sourceMappingURL=main.js.map
 

@@ -16,6 +16,10 @@ RUN apt-get update \
 # Receive the APP_PATH argument:
 ARG APP_PATH=/icalia-actions/deploy-aws-ecs-service
 
+# Ensure the developer user's home directory and APP_PATH are owned by him/her:
+# (A workaround to a side effect of setting WORKDIR before creating the user)
+RUN mkdir -p ${APP_PATH} && chown -R node:node ${APP_PATH}
+
 # Add the project's executable path to the system PATH:
 ENV PATH=${APP_PATH}/bin:$PATH
 
@@ -26,8 +30,8 @@ WORKDIR ${APP_PATH}
 USER node
 
 # Copy and install the project dependency lists into the container image:
-# COPY package.json yarn.lock ${APP_PATH}/
-# RUN yarn install
+COPY package.json yarn.lock ${APP_PATH}/
+RUN yarn install
 
 FROM testing AS development
 
@@ -39,6 +43,8 @@ USER root
 RUN apt-get install -y --no-install-recommends \
   # Adding bash autocompletion as git without autocomplete is a pain...
   bash-completion \
+  #glibc?
+  groff less \
   # gpg & gpgconf is used to get Git Commit GPG Signatures working inside the 
   # VSCode devcontainer:
   gpg \
@@ -46,10 +52,15 @@ RUN apt-get install -y --no-install-recommends \
   openssh-client \
   # /proc file system utilities: (watch, ps):
   procps \
+  # Sudo will be used to install/configure system stuff if needed during dev:
+  sudo \
   # Vim might be used to edit files when inside the container (git, etc):
   vim \
-  # Sudo will be used to install/configure system stuff if needed during dev:
-  sudo
+  unzip
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.1.32.zip" -o "awscliv2.zip" \
+ && unzip awscliv2.zip \
+ && ./aws/install
 
 # Add the developer user to the sudoers list:
 RUN echo "node ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/node"
