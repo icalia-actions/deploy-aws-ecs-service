@@ -45,17 +45,18 @@ function run() {
         const { taskDefinitionArn } = yield task_definition_registration_1.registerTaskDefinition(taskRegistrationInput);
         if (!taskDefinitionArn)
             throw new Error("Task definition failed to register");
-        serviceDeploymentInput.taskDefinitionArn = taskDefinitionArn;
-        core_1.info(`Registering task definition '${serviceName}'...`);
+        serviceDeploymentInput.taskDefinition = taskDefinitionArn;
+        core_1.info(`Deploying service '${serviceName}'...`);
         const deployedService = yield service_deployment_1.deployService(serviceDeploymentInput);
         const { serviceArn, clusterArn } = deployedService;
+        const region = process.env.AWS_DEFAULT_REGION;
         core_1.info('Service Update Details:');
         core_1.info(`         Service Name: ${serviceName}`);
         core_1.info(`          Cluster ARN: ${clusterArn}`);
         core_1.info(`          Service ARN: ${serviceArn}`);
         core_1.info(`  Task Definition ARN: ${taskDefinitionArn}`);
         core_1.info('');
-        core_1.info(`Follow deployment progress at https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/services/${serviceName}`);
+        core_1.info(`Follow deployment progress at https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/services/${serviceName}/deployments?region=${region}`);
         core_1.info('');
         core_1.setOutput('service-arn', serviceArn);
         core_1.setOutput('task-definition-arn', taskDefinitionArn);
@@ -136,18 +137,18 @@ function processServiceDeployInput(input) {
     let serviceToDeploy = readServiceDefinitionTemplate(input);
     if (!serviceToDeploy)
         serviceToDeploy = {};
-    const { cluster, desiredCount, taskDefinitionArn } = input;
+    const { cluster, desiredCount, taskDefinition } = input;
     if (cluster)
         serviceToDeploy.cluster = cluster;
     if (desiredCount)
         serviceToDeploy.desiredCount = desiredCount;
-    if (taskDefinitionArn)
-        serviceToDeploy.taskDefinition = taskDefinitionArn;
+    if (taskDefinition)
+        serviceToDeploy.taskDefinition = taskDefinition;
     return serviceToDeploy;
 }
 function processServiceCreateInput(input) {
-    const { serviceName, targetGroupArn } = input;
-    let serviceToCreate = readServiceDefinitionTemplate(input);
+    const { serviceName } = input;
+    let serviceToCreate = processServiceDeployInput(input);
     if (!serviceToCreate)
         throw new Error("Incomplete service create input");
     setServiceLoadBalancers(serviceToCreate, input);
