@@ -32,6 +32,7 @@ USER node
 # Copy and install the project dependency lists into the container image:
 COPY package.json yarn.lock ${APP_PATH}/
 RUN yarn install
+ENV PATH=${APP_PATH}/node_modules/.bin:$PATH
 
 FROM testing AS development
 
