@@ -1,5 +1,9 @@
-name: Run AWS ECS Task
-description: Runs a task in AWS ECS
+name: Deploy AWS ECS Service
+description: Deploys a service with the given task definition and service templates
+
+branding:
+  icon: activity
+  color: red
 
 inputs:
   cluster:
