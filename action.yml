@@ -1,0 +1,41 @@
+name: Run AWS ECS Task
+description: Runs a task in AWS ECS
+
+inputs:
+  cluster:
+    description: The AWS ECS cluster where we should run the task
+    required: false
+  service-name:
+    description: The name of your service. Up to 255 letters (uppercase and lowercase), numbers, and hyphens are allowed.
+    required: true
+  desired-count:
+    description: The number of instantiations of the specified task definition to place and keep running on your cluster.
+    required: false
+  target-group-arn:
+    description: The Target Group ARN for the service to associate
+    required: false
+  service-template-path:
+    description: The path to the AWS ECS Service template to use
+    required: false
+  force-new-deployment:
+    description: Forces a new service deployment
+    required: false
+  task-definition-template-path:
+    description: The path to the AWS ECS Task Definition template to use
+    required: false
+  container-images:
+    description: A JSON map of containers and their respective images to use
+    required: false
+  environment-vars:
+    description: A JSON map of environment variables that will be replaced in the template (on all containers)
+    required: false
+
+outputs:
+  service-arn: # id of output
+    description: The Service ARN
+  task-definition-arn:
+    description: The Service's Task Definition ARN
+
+runs:
+  using: node12
+  main: dist/index.js
