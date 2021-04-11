@@ -17,52 +17,54 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
 const core_1 = __nccwpck_require__(2186);
 const service_deployment_1 = __nccwpck_require__(9860);
 const register_aws_ecs_task_definition_1 = __nccwpck_require__(3686);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const cluster = core_1.getInput("cluster");
-        const serviceName = core_1.getInput("service-name");
+        const name = core_1.getInput("name");
         let desiredCount = parseInt(core_1.getInput("desired-count"));
         if (isNaN(desiredCount))
             desiredCount = 1;
         const serviceDeploymentInput = {
             cluster,
-            serviceName,
+            name,
             desiredCount,
             targetGroupArn: core_1.getInput("target-group-arn"),
-            templatePath: core_1.getInput("service-template-path"),
+            template: core_1.getInput("template"),
             forceNewDeployment: core_1.getInput("force-new-deployment") == "true",
         };
         const taskRegistrationInput = {
-            family: serviceName,
+            family: name,
             templatePath: core_1.getInput("task-definition-template-path"),
             containerImages: JSON.parse(core_1.getInput("container-images") || "null"),
             environmentVars: JSON.parse(core_1.getInput("environment-vars") || "null"),
         };
-        core_1.info(`Registering task definition '${serviceName}'...`);
+        core_1.info(`Registering task definition '${name}'...`);
         const { taskDefinitionArn } = yield register_aws_ecs_task_definition_1.registerTaskDefinition(taskRegistrationInput);
         if (!taskDefinitionArn)
             throw new Error("Task definition failed to register");
         serviceDeploymentInput.taskDefinition = taskDefinitionArn;
-        core_1.info(`Deploying service '${serviceName}'...`);
+        core_1.info(`Deploying service '${name}'...`);
         const deployedService = yield service_deployment_1.deployService(serviceDeploymentInput);
         const { serviceArn, clusterArn } = deployedService;
         const region = process.env.AWS_DEFAULT_REGION;
         core_1.info("Service Update Details:");
-        core_1.info(`         Service Name: ${serviceName}`);
+        core_1.info(`         Service Name: ${name}`);
         core_1.info(`          Cluster ARN: ${clusterArn}`);
         core_1.info(`          Service ARN: ${serviceArn}`);
         core_1.info(`  Task Definition ARN: ${taskDefinitionArn}`);
         core_1.info("");
-        core_1.info(`Follow deployment progress at https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/services/${serviceName}/deployments?region=${region}`);
+        core_1.info(`Follow deployment progress at https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/services/${name}/deployments?region=${region}`);
         core_1.info("");
         core_1.setOutput("service-arn", serviceArn);
         core_1.setOutput("task-definition-arn", taskDefinitionArn);
         return 0;
     });
 }
+exports.run = run;
 //# sourceMappingURL=action.js.map
 
 /***/ }),
@@ -148,10 +150,10 @@ function setServiceLoadBalancers(request, input) {
     });
 }
 function readServiceDefinitionTemplate(input) {
-    const { templatePath } = input;
-    if (!templatePath || !fs.existsSync(templatePath))
+    const { template } = input;
+    if (!template || !fs.existsSync(template))
         return;
-    const templateContents = fs.readFileSync(templatePath, "utf8");
+    const templateContents = fs.readFileSync(template, "utf8");
     return yaml_1.parse(templateContents);
 }
 function processServiceDeployInput(input) {
@@ -168,23 +170,23 @@ function processServiceDeployInput(input) {
     return serviceToDeploy;
 }
 function processServiceCreateInput(input) {
-    const { serviceName } = input;
+    const { name } = input;
     let serviceToCreate = processServiceDeployInput(input);
     if (!serviceToCreate)
         throw new Error("Incomplete service create input");
     setServiceLoadBalancers(serviceToCreate, input);
-    if (serviceName)
-        serviceToCreate.serviceName = serviceName;
+    if (name)
+        serviceToCreate.serviceName = name;
     return serviceToCreate;
 }
 function processServiceUpdateInput(input) {
-    const { serviceName } = input;
+    const { name } = input;
     const { cluster, desiredCount, taskDefinition, capacityProviderStrategy, deploymentConfiguration, networkConfiguration, placementConstraints, placementStrategy, platformVersion, healthCheckGracePeriodSeconds, enableExecuteCommand, } = processServiceDeployInput(input);
     return {
         cluster,
         desiredCount,
         taskDefinition,
-        service: serviceName,
+        service: name,
         capacityProviderStrategy,
         deploymentConfiguration,
         networkConfiguration,
@@ -198,11 +200,11 @@ function processServiceUpdateInput(input) {
 function findService(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const ecs = getClient();
-        const { cluster, serviceName } = input;
-        if (!serviceName)
+        const { cluster, name } = input;
+        if (!name)
             return;
         const { services } = yield ecs
-            .describeServices({ cluster, services: [serviceName] })
+            .describeServices({ cluster, services: [name] })
             .promise();
         if (!services || services.length < 1)
             return;

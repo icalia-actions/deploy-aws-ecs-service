@@ -10,7 +10,7 @@ Deploys a Task Definition as a Service in AWS ECS
         with:
           cluster: my-cluster
           deploy-aws-ecs-service: my-service
-          service-template-path: templates/ecs/my-service.json
+          template: templates/ecs/my-service.json
 
           # You can optionally specify the desired task count:
           desired-count: 1

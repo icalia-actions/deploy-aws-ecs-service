@@ -18,7 +18,7 @@ inputs:
   target-group-arn:
     description: The Target Group ARN for the service to associate
     required: false
-  service-template-path:
+  template:
     description: The path to the AWS ECS Service template to use
     required: false
   force-new-deployment:
