@@ -9,10 +9,10 @@ import ECS, {
 } from "aws-sdk/clients/ecs";
 
 export interface ServiceDeploymentInput {
+  name: string;
   cluster?: string;
-  serviceName: string;
   desiredCount?: Integer;
-  templatePath?: string;
+  template?: string;
   taskDefinition?: string;
   targetGroupArn?: string;
   forceNewDeployment?: boolean;
@@ -43,10 +43,10 @@ function setServiceLoadBalancers(
 function readServiceDefinitionTemplate(
   input: ServiceDeploymentInput
 ): CreateServiceRequest | undefined {
-  const { templatePath } = input;
-  if (!templatePath || !fs.existsSync(templatePath)) return;
+  const { template } = input;
+  if (!template || !fs.existsSync(template)) return;
 
-  const templateContents = fs.readFileSync(templatePath, "utf8");
+  const templateContents = fs.readFileSync(template, "utf8");
   return parse(templateContents);
 }
 
@@ -67,12 +67,12 @@ function processServiceDeployInput(
 function processServiceCreateInput(
   input: ServiceDeploymentInput
 ): CreateServiceRequest {
-  const { serviceName } = input;
+  const { name } = input;
   let serviceToCreate = processServiceDeployInput(input);
   if (!serviceToCreate) throw new Error("Incomplete service create input");
 
   setServiceLoadBalancers(serviceToCreate, input);
-  if (serviceName) serviceToCreate.serviceName = serviceName;
+  if (name) serviceToCreate.serviceName = name;
 
   return serviceToCreate;
 }
@@ -80,7 +80,7 @@ function processServiceCreateInput(
 function processServiceUpdateInput(
   input: ServiceDeploymentInput
 ): UpdateServiceRequest {
-  const { serviceName } = input;
+  const { name } = input;
   const {
     cluster,
     desiredCount,
@@ -99,7 +99,7 @@ function processServiceUpdateInput(
     cluster,
     desiredCount,
     taskDefinition,
-    service: serviceName,
+    service: name,
     capacityProviderStrategy,
     deploymentConfiguration,
     networkConfiguration,
@@ -115,11 +115,11 @@ async function findService(
   input: ServiceDeploymentInput
 ): Promise<Service | undefined> {
   const ecs = getClient();
-  const { cluster, serviceName } = input;
-  if (!serviceName) return;
+  const { cluster, name } = input;
+  if (!name) return;
 
   const { services } = await ecs
-    .describeServices({ cluster, services: [serviceName] })
+    .describeServices({ cluster, services: [name] })
     .promise();
   if (!services || services.length < 1) return;
 

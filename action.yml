@@ -6,25 +6,25 @@ branding:
   color: red
 
 inputs:
+  name:
+    description: The name of your service. Up to 255 letters (uppercase and lowercase), numbers, and hyphens are allowed.
+    required: true
   cluster:
     description: The AWS ECS cluster where we should run the task
     required: false
-  service-name:
-    description: The name of your service. Up to 255 letters (uppercase and lowercase), numbers, and hyphens are allowed.
-    required: true
   desired-count:
     description: The number of instantiations of the specified task definition to place and keep running on your cluster.
     required: false
   target-group-arn:
     description: The Target Group ARN for the service to associate
     required: false
-  service-template-path:
+  template:
     description: The path to the AWS ECS Service template to use
     required: false
   force-new-deployment:
     description: Forces a new service deployment
     required: false
-  task-definition-template-path:
+  definition-template:
     description: The path to the AWS ECS Task Definition template to use
     required: false
   container-images:

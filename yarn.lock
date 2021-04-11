@@ -330,10 +330,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@icalialabs/register-aws-ecs-task-definition@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@icalialabs/register-aws-ecs-task-definition/-/register-aws-ecs-task-definition-0.0.11.tgz#a79e802a3bf2b343024a53bc0e8a09cd20658e28"
-  integrity sha512-cqPHrvo608zQSww9A7BNcI0qnASxPAeyykrDYAd05xsPDEuKhVCJHXWtLGXuLFdIm3kqoV6ySMkQtYHU7m4BHA==
+"@icalialabs/register-aws-ecs-task-definition@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@icalialabs/register-aws-ecs-task-definition/-/register-aws-ecs-task-definition-0.0.13.tgz#2af926070f384a5c76e7b6392884eaff124599bd"
+  integrity sha512-sWcfWdsTC4fVk5nWl/UA2Pc8Kv054GcSQYynvBVROpXTt8l/oaBJ5uhtWVumPVepzHS0eFM9M86VtWbrGEQu1w==
   dependencies:
     aws-sdk "^2.875.0"
 
