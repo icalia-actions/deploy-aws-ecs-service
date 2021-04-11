@@ -8,8 +8,8 @@ Deploys a Task Definition as a Service in AWS ECS
       - name: Deploy AWS ECS Service
         uses: icalia-actions/deploy-aws-ecs-service@v0.0.1
         with:
+          name: my-service
           cluster: my-cluster
-          deploy-aws-ecs-service: my-service
           template: templates/ecs/my-service.json
 
           # You can optionally specify the desired task count:
