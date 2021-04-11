@@ -38,7 +38,7 @@ function run() {
         };
         const taskRegistrationInput = {
             family: name,
-            templatePath: core_1.getInput("task-definition-template-path"),
+            templatePath: core_1.getInput("definition-template"),
             containerImages: JSON.parse(core_1.getInput("container-images") || "null"),
             environmentVars: JSON.parse(core_1.getInput("environment-vars") || "null"),
         };

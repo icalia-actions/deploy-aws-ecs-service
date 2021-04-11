@@ -16,7 +16,7 @@ Deploys a Task Definition as a Service in AWS ECS
           desired-count: 1
 
           # If you provide a task definition template, it will get registered:
-          task-definition-template-path: templates/ecs/my-task-definition.json
+          definition-template: templates/ecs/my-task-definition.json
 
           # You can override the image used on any container - the most common
           # use case is to deploy an image built & pushed on a previous step:

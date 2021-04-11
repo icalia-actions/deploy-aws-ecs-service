@@ -23,7 +23,7 @@ export async function run(): Promise<number> {
 
   const taskRegistrationInput = {
     family: name,
-    templatePath: getInput("task-definition-template-path"),
+    templatePath: getInput("definition-template"),
     containerImages: JSON.parse(getInput("container-images") || "null"),
     environmentVars: JSON.parse(getInput("environment-vars") || "null"),
   } as TaskRegistrationInput;

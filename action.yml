@@ -24,7 +24,7 @@ inputs:
   force-new-deployment:
     description: Forces a new service deployment
     required: false
-  task-definition-template-path:
+  definition-template:
     description: The path to the AWS ECS Task Definition template to use
     required: false
   container-images:
