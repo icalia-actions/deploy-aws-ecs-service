@@ -2,7 +2,7 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 3109:
+/***/ 9139:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -22,24 +22,24 @@ const service_deployment_1 = __nccwpck_require__(9860);
 const task_definition_registration_1 = __nccwpck_require__(154);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const cluster = core_1.getInput('cluster');
-        const serviceName = core_1.getInput('service-name');
-        let desiredCount = parseInt(core_1.getInput('desired-count'));
+        const cluster = core_1.getInput("cluster");
+        const serviceName = core_1.getInput("service-name");
+        let desiredCount = parseInt(core_1.getInput("desired-count"));
         if (isNaN(desiredCount))
             desiredCount = 1;
         const serviceDeploymentInput = {
             cluster,
             serviceName,
             desiredCount,
-            targetGroupArn: core_1.getInput('target-group-arn'),
-            templatePath: core_1.getInput('service-template-path'),
-            forceNewDeployment: (core_1.getInput('force-new-deployment') == 'true')
+            targetGroupArn: core_1.getInput("target-group-arn"),
+            templatePath: core_1.getInput("service-template-path"),
+            forceNewDeployment: core_1.getInput("force-new-deployment") == "true",
         };
         const taskRegistrationInput = {
             family: serviceName,
-            templatePath: core_1.getInput('task-definition-template-path'),
-            containerImages: JSON.parse(core_1.getInput('container-images') || 'null'),
-            environmentVars: JSON.parse(core_1.getInput('environment-vars') || 'null')
+            templatePath: core_1.getInput("task-definition-template-path"),
+            containerImages: JSON.parse(core_1.getInput("container-images") || "null"),
+            environmentVars: JSON.parse(core_1.getInput("environment-vars") || "null"),
         };
         core_1.info(`Registering task definition '${serviceName}'...`);
         const { taskDefinitionArn } = yield task_definition_registration_1.registerTaskDefinition(taskRegistrationInput);
@@ -50,22 +50,41 @@ function run() {
         const deployedService = yield service_deployment_1.deployService(serviceDeploymentInput);
         const { serviceArn, clusterArn } = deployedService;
         const region = process.env.AWS_DEFAULT_REGION;
-        core_1.info('Service Update Details:');
+        core_1.info("Service Update Details:");
         core_1.info(`         Service Name: ${serviceName}`);
         core_1.info(`          Cluster ARN: ${clusterArn}`);
         core_1.info(`          Service ARN: ${serviceArn}`);
         core_1.info(`  Task Definition ARN: ${taskDefinitionArn}`);
-        core_1.info('');
+        core_1.info("");
         core_1.info(`Follow deployment progress at https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/services/${serviceName}/deployments?region=${region}`);
-        core_1.info('');
-        core_1.setOutput('service-arn', serviceArn);
-        core_1.setOutput('task-definition-arn', taskDefinitionArn);
+        core_1.info("");
+        core_1.setOutput("service-arn", serviceArn);
+        core_1.setOutput("task-definition-arn", taskDefinitionArn);
         return 0;
     });
 }
-run()
-    .then(status => process.exit(status))
-    .catch(error => core_1.setFailed(error.message));
+//# sourceMappingURL=action.js.map
+
+/***/ }),
+
+/***/ 3109:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(9860), exports);
+__exportStar(__nccwpck_require__(9139), exports);
 //# sourceMappingURL=main.js.map
 
 /***/ }),
@@ -113,8 +132,8 @@ const yaml_1 = __nccwpck_require__(3552);
 const ecs_1 = __importDefault(__nccwpck_require__(6615));
 function getClient() {
     return new ecs_1.default({
-        customUserAgent: 'icalia-actions/aws-action',
-        region: process.env.AWS_DEFAULT_REGION
+        customUserAgent: "icalia-actions/aws-action",
+        region: process.env.AWS_DEFAULT_REGION,
     });
 }
 function setServiceLoadBalancers(request, input) {
@@ -123,14 +142,16 @@ function setServiceLoadBalancers(request, input) {
     if (!targetGroupArn || !loadBalancers)
         return;
     loadBalancers
-        .filter(lb => !lb['targetGroupArn'])
-        .forEach(lb => { lb['targetGroupArn'] = targetGroupArn; });
+        .filter((lb) => !lb["targetGroupArn"])
+        .forEach((lb) => {
+        lb["targetGroupArn"] = targetGroupArn;
+    });
 }
 function readServiceDefinitionTemplate(input) {
     const { templatePath } = input;
     if (!templatePath || !fs.existsSync(templatePath))
         return;
-    const templateContents = fs.readFileSync(templatePath, 'utf8');
+    const templateContents = fs.readFileSync(templatePath, "utf8");
     return yaml_1.parse(templateContents);
 }
 function processServiceDeployInput(input) {
@@ -158,7 +179,7 @@ function processServiceCreateInput(input) {
 }
 function processServiceUpdateInput(input) {
     const { serviceName } = input;
-    const { cluster, desiredCount, taskDefinition, capacityProviderStrategy, deploymentConfiguration, networkConfiguration, placementConstraints, placementStrategy, platformVersion, healthCheckGracePeriodSeconds, enableExecuteCommand } = processServiceDeployInput(input);
+    const { cluster, desiredCount, taskDefinition, capacityProviderStrategy, deploymentConfiguration, networkConfiguration, placementConstraints, placementStrategy, platformVersion, healthCheckGracePeriodSeconds, enableExecuteCommand, } = processServiceDeployInput(input);
     return {
         cluster,
         desiredCount,
@@ -171,7 +192,7 @@ function processServiceUpdateInput(input) {
         placementStrategy,
         platformVersion,
         healthCheckGracePeriodSeconds,
-        enableExecuteCommand
+        enableExecuteCommand,
     };
 }
 function findService(input) {
@@ -180,7 +201,9 @@ function findService(input) {
         const { cluster, serviceName } = input;
         if (!serviceName)
             return;
-        const { services } = yield ecs.describeServices({ cluster, services: [serviceName] }).promise();
+        const { services } = yield ecs
+            .describeServices({ cluster, services: [serviceName] })
+            .promise();
         if (!services || services.length < 1)
             return;
         return services[0];
@@ -190,7 +213,9 @@ function updateService(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const ecs = getClient();
         const serviceToUpdate = processServiceUpdateInput(input);
-        const { service: updatedService } = yield ecs.updateService(serviceToUpdate).promise();
+        const { service: updatedService } = yield ecs
+            .updateService(serviceToUpdate)
+            .promise();
         if (!updatedService)
             throw new Error(`Service '${serviceToUpdate.service}' could not be updated`);
         return updatedService;
@@ -201,7 +226,9 @@ function createService(input) {
         const ecs = getClient();
         const serviceToCreate = processServiceCreateInput(input);
         const { serviceName } = serviceToCreate;
-        const { service: createdService } = yield ecs.createService(serviceToCreate).promise();
+        const { service: createdService } = yield ecs
+            .createService(serviceToCreate)
+            .promise();
         if (!createdService)
             throw new Error(`Service '${serviceName}' could not be created`);
         return createdService;
@@ -210,7 +237,7 @@ function createService(input) {
 function deployService(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const serviceToDeploy = yield findService(input);
-        const deployMethod = (serviceToDeploy) ? updateService : createService;
+        const deployMethod = serviceToDeploy ? updateService : createService;
         return yield deployMethod(input);
     });
 }
@@ -262,15 +289,15 @@ const yaml_1 = __nccwpck_require__(3552);
 const ecs_1 = __importDefault(__nccwpck_require__(6615));
 function getClient() {
     return new ecs_1.default({
-        customUserAgent: 'icalia-actions/aws-action',
-        region: process.env.AWS_DEFAULT_REGION
+        customUserAgent: "icalia-actions/aws-action",
+        region: process.env.AWS_DEFAULT_REGION,
     });
 }
 function readTaskDefinitionTemplate(input) {
     const { templatePath } = input;
     if (!templatePath || !fs.existsSync(templatePath))
         return;
-    const templateContents = fs.readFileSync(templatePath, 'utf8');
+    const templateContents = fs.readFileSync(templatePath, "utf8");
     return yaml_1.parse(templateContents);
 }
 function overrideContainerImages(definition, containerImages) {
@@ -278,7 +305,7 @@ function overrideContainerImages(definition, containerImages) {
     if (!containerImages || !containerDefinitions)
         return;
     for (const [name, image] of Object.entries(containerImages)) {
-        const definition = containerDefinitions.find(def => def.name == name);
+        const definition = containerDefinitions.find((def) => def.name == name);
         if (definition)
             definition.image = image;
     }
@@ -288,11 +315,11 @@ function overrideEnvironmentVars(definition, environmentVars) {
     if (!environmentVars || !containerDefinitions)
         return;
     for (const [name, value] of Object.entries(environmentVars)) {
-        containerDefinitions.forEach(definition => {
+        containerDefinitions.forEach((definition) => {
             const { environment } = definition;
             if (!environment)
                 return;
-            let variableDefinition = environment.find(def => def.name == name);
+            let variableDefinition = environment.find((def) => def.name == name);
             if (variableDefinition)
                 variableDefinition.value = value;
         });
