@@ -3,7 +3,7 @@ import { deployService, ServiceDeploymentInput } from "./service-deployment";
 import {
   registerTaskDefinition,
   TaskRegistrationInput,
-} from "./task-definition-registration";
+} from "@icalialabs/register-aws-ecs-task-definition";
 
 async function run(): Promise<number> {
   const cluster = getInput("cluster");
