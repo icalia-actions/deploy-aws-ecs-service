@@ -12,13 +12,14 @@ services:
       target: testing
       context: .
       args:
-        APP_PATH: ${PWD}
+        APP_PATH: ${PWD:-/icalia-actions/deploy-aws-ecs-service}
         DEVELOPER_UID: ${UID:-1000}
         DEVELOPER_USERNAME: ${USER:-you}
-    command: yarn test
+    # command: yarn test
+    command: sh -c "pwd && ls -lah"
     volumes:
-      - .:${PWD:-/deploy-aws-ecs-service}
-      - node_modules:${PWD}/node_modules
+      - .:${PWD:-/icalia-actions/deploy-aws-ecs-service}
+      - node_modules:${PWD:-/icalia-actions/deploy-aws-ecs-service}/node_modules
 
   publisher:
     <<: *lib
