@@ -16,7 +16,7 @@ services:
         DEVELOPER_UID: ${UID:-1000}
         DEVELOPER_USERNAME: ${USER:-you}
     # command: yarn test
-    command: sh -c "pwd && ls -lah"
+    command: sh -c "pwd && ls -lah && yarn test"
     volumes:
       - .:${PWD:-/icalia-actions/deploy-aws-ecs-service}
       - node_modules:${PWD:-/icalia-actions/deploy-aws-ecs-service}/node_modules
