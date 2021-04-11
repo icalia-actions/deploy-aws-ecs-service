@@ -23,32 +23,30 @@ const service_deployment_1 = __nccwpck_require__(9860);
 const register_aws_ecs_task_definition_1 = __nccwpck_require__(3686);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const cluster = core_1.getInput("cluster");
         const name = core_1.getInput("name");
+        const cluster = core_1.getInput("cluster");
         let desiredCount = parseInt(core_1.getInput("desired-count"));
         if (isNaN(desiredCount))
             desiredCount = 1;
-        const serviceDeploymentInput = {
-            cluster,
-            name,
-            desiredCount,
-            targetGroupArn: core_1.getInput("target-group-arn"),
-            template: core_1.getInput("template"),
-            forceNewDeployment: core_1.getInput("force-new-deployment") == "true",
-        };
-        const taskRegistrationInput = {
+        core_1.info(`Registering task definition '${name}'...`);
+        const { taskDefinitionArn } = yield register_aws_ecs_task_definition_1.registerTaskDefinition({
             family: name,
-            templatePath: core_1.getInput("definition-template"),
+            template: core_1.getInput("definition-template"),
             containerImages: JSON.parse(core_1.getInput("container-images") || "null"),
             environmentVars: JSON.parse(core_1.getInput("environment-vars") || "null"),
-        };
-        core_1.info(`Registering task definition '${name}'...`);
-        const { taskDefinitionArn } = yield register_aws_ecs_task_definition_1.registerTaskDefinition(taskRegistrationInput);
+        });
         if (!taskDefinitionArn)
             throw new Error("Task definition failed to register");
-        serviceDeploymentInput.taskDefinition = taskDefinitionArn;
         core_1.info(`Deploying service '${name}'...`);
-        const deployedService = yield service_deployment_1.deployService(serviceDeploymentInput);
+        const deployedService = yield service_deployment_1.deployService({
+            name,
+            cluster,
+            desiredCount,
+            template: core_1.getInput("template"),
+            taskDefinition: taskDefinitionArn,
+            targetGroupArn: core_1.getInput("target-group-arn"),
+            forceNewDeployment: core_1.getInput("force-new-deployment") == "true",
+        });
         const { serviceArn, clusterArn } = deployedService;
         const region = process.env.AWS_DEFAULT_REGION;
         core_1.info("Service Update Details:");
@@ -661,14 +659,14 @@ const core_1 = __nccwpck_require__(2186);
 const task_definition_registration_1 = __nccwpck_require__(305);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const taskRegistrationInput = {
-            family: core_1.getInput("family"),
-            templatePath: core_1.getInput("template-path"),
+        const family = core_1.getInput("family");
+        core_1.info(`Registering task definition '${family}'...`);
+        const { taskDefinitionArn } = yield task_definition_registration_1.registerTaskDefinition({
+            family,
+            template: core_1.getInput("template"),
             containerImages: JSON.parse(core_1.getInput("container-images") || "null"),
             environmentVars: JSON.parse(core_1.getInput("environment-vars") || "null"),
-        };
-        core_1.info(`Registering task definition '${taskRegistrationInput.family}'...`);
-        const { taskDefinitionArn } = yield task_definition_registration_1.registerTaskDefinition(taskRegistrationInput);
+        });
         if (!taskDefinitionArn)
             throw new Error("Task definition failed to register");
         core_1.info("Task Definition Registration Details:");
@@ -753,10 +751,10 @@ function getClient() {
     });
 }
 function readTaskDefinitionTemplate(input) {
-    const { templatePath } = input;
-    if (!templatePath || !fs.existsSync(templatePath))
+    const { template } = input;
+    if (!template || !fs.existsSync(template))
         return;
-    const templateContents = fs.readFileSync(templatePath, "utf8");
+    const templateContents = fs.readFileSync(template, "utf8");
     return yaml_1.parse(templateContents);
 }
 function overrideContainerImages(definition, containerImages) {

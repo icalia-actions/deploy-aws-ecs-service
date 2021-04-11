@@ -6,38 +6,31 @@ import {
 } from "@icalialabs/register-aws-ecs-task-definition";
 
 export async function run(): Promise<number> {
-  const cluster = getInput("cluster");
   const name = getInput("name");
+  const cluster = getInput("cluster");
 
   let desiredCount = parseInt(getInput("desired-count"));
   if (isNaN(desiredCount)) desiredCount = 1;
 
-  const serviceDeploymentInput = {
-    cluster,
-    name,
-    desiredCount,
-    targetGroupArn: getInput("target-group-arn"),
-    template: getInput("template"),
-    forceNewDeployment: getInput("force-new-deployment") == "true",
-  } as ServiceDeploymentInput;
-
-  const taskRegistrationInput = {
+  info(`Registering task definition '${name}'...`);
+  const { taskDefinitionArn } = await registerTaskDefinition({
     family: name,
-    templatePath: getInput("definition-template"),
+    template: getInput("definition-template"),
     containerImages: JSON.parse(getInput("container-images") || "null"),
     environmentVars: JSON.parse(getInput("environment-vars") || "null"),
-  } as TaskRegistrationInput;
-
-  info(`Registering task definition '${name}'...`);
-  const { taskDefinitionArn } = await registerTaskDefinition(
-    taskRegistrationInput
-  );
+  } as TaskRegistrationInput);
   if (!taskDefinitionArn) throw new Error("Task definition failed to register");
 
-  serviceDeploymentInput.taskDefinition = taskDefinitionArn;
-
   info(`Deploying service '${name}'...`);
-  const deployedService = await deployService(serviceDeploymentInput);
+  const deployedService = await deployService({
+    name,
+    cluster,
+    desiredCount,
+    template: getInput("template"),
+    taskDefinition: taskDefinitionArn,
+    targetGroupArn: getInput("target-group-arn"),
+    forceNewDeployment: getInput("force-new-deployment") == "true",
+  } as ServiceDeploymentInput);
   const { serviceArn, clusterArn } = deployedService;
   const region = process.env.AWS_DEFAULT_REGION;
 
