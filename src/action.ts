@@ -7,7 +7,7 @@ import {
 
 async function run(): Promise<number> {
   const cluster = getInput("cluster");
-  const serviceName = getInput("service-name");
+  const serviceName = getInput("deploy-aws-ecs-service");
 
   let desiredCount = parseInt(getInput("desired-count"));
   if (isNaN(desiredCount)) desiredCount = 1;

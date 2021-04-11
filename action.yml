@@ -9,7 +9,7 @@ inputs:
   cluster:
     description: The AWS ECS cluster where we should run the task
     required: false
-  service-name:
+  deploy-aws-ecs-service:
     description: The name of your service. Up to 255 letters (uppercase and lowercase), numbers, and hyphens are allowed.
     required: true
   desired-count:
