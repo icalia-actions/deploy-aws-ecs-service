@@ -1,5 +1,6 @@
 name: Deploy AWS ECS Service
 description: Deploys a service with the given task definition and service templates
+author: Icalia Labs
 
 branding:
   icon: activity
