@@ -27,6 +27,12 @@ Deploys a Task Definition as a Service in AWS ECS
           # already exists in the container definition:
           environment-vars: '{"FOO":"BAR"}'
 
+          # You can also override secrets already defined in the "secrets" key
+          # inside the container definition by using a map consisting of the
+          # "name" as key, and the "valueFrom" as the value - the secret name
+          # *must* be present in the definition, otherwise it will be ignored.
+          secrets: '{"MY_SECRET":"some-secret-name"}'
+
           # If your service must be associated with a load balancer target group,
           # you can specify a Target Group ARN:
           target-group-arn: my-target-group-arn
