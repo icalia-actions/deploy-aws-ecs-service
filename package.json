@@ -50,7 +50,7 @@
     "typescript-formatter": "^7.2.2"
   },
   "dependencies": {
-    "@icalialabs/register-aws-ecs-task-definition": "^0.0.13",
+    "@icalialabs/register-aws-ecs-task-definition": "^0.0.14",
     "aws-sdk": "^2.875.0"
   }
 }

@@ -16,6 +16,7 @@ export async function run(): Promise<number> {
   const { taskDefinitionArn } = await registerTaskDefinition({
     family: name,
     template: getInput("definition-template"),
+    secrets: JSON.parse(getInput("secrets") || "null"),
     containerImages: JSON.parse(getInput("container-images") || "null"),
     environmentVars: JSON.parse(getInput("environment-vars") || "null"),
   } as TaskRegistrationInput);
