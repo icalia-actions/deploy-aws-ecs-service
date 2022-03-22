@@ -57,7 +57,6 @@ jobs:
             icalia-actions/deploy-aws-ecs-service:testing-${{ github.sha }}
             icalia-actions/deploy-aws-ecs-service:testing-latest
           build-args: |
-            APP_PATH=${{env.PWD}}
             DEVELOPER_UID=${{env.UID}}
             DEVELOPER_USERNAME=${{env.USER}}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -115,15 +114,12 @@ jobs:
             icalia-actions/deploy-aws-ecs-service:testing-${{ github.sha }}
             icalia-actions/deploy-aws-ecs-service:testing-latest
           build-args: |
-            APP_PATH=${{env.PWD}}
             DEVELOPER_UID=${{env.UID}}
             DEVELOPER_USERNAME=${{env.USER}}
           cache-from: type=local,src=/tmp/.buildx-cache
 
       - name: Run Tests
-        uses: icalia-actions/run-ci-compose@v0.0.2
-        with:
-          service-name: tests
+        run: docker-compose --profile ci run --rm tests
 
   release_build:
     name: Build Release
@@ -161,7 +157,6 @@ jobs:
             icalia-actions/deploy-aws-ecs-service:${{ github.sha }}
             icalia-actions/deploy-aws-ecs-service:latest
           build-args: |
-            APP_PATH=${{env.PWD}}
             DEVELOPER_UID=${{env.UID}}
             DEVELOPER_USERNAME=${{env.USER}}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -225,7 +220,6 @@ jobs:
             icalia-actions/deploy-aws-ecs-service:${{ github.sha }}
             icalia-actions/deploy-aws-ecs-service:latest
           build-args: |
-            APP_PATH=${{env.PWD}}
             DEVELOPER_UID=${{env.UID}}
             DEVELOPER_USERNAME=${{env.USER}}
           cache-from: type=local,src=/tmp/.buildx-cache
