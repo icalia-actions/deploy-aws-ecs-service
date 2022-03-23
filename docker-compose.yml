@@ -28,7 +28,6 @@ services:
     command: yarn publish --non-interactive --access public
     environment:
       NPM_AUTH_TOKEN: ${NPM_AUTH_TOKEN}
-
     profiles: # See https://docs.docker.com/compose/profiles
       - ci
   
@@ -68,4 +67,8 @@ services:
     environment:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      GIT_EDITOR: code
+      
+      VSCODE_CONTEXT: "yes"
+
+      # Use VSCode as editor:
+      EDITOR: code -w
