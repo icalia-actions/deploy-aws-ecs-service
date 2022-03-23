@@ -15,7 +15,7 @@ services:
     command: yarn test
     volumes:
       - .:/workspaces/deploy-aws-ecs-service
-      - node_modules:/workspaces/deploy-aws-ecs-service
+      - node_modules:/workspaces/deploy-aws-ecs-service/node_modules
     profiles: # See https://docs.docker.com/compose/profiles
       - ci
 
