@@ -1,6 +1,7 @@
 # Ignore all Docker files:
 Dockerfile
-*-compose.yml
+docker-compose.yml
+docker-compose.override.yml
 .dockerignore
 
 # Ignore Git files & config:

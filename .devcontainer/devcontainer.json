@@ -25,16 +25,18 @@
   // contents of later files can override values set in previous ones.
   "dockerComposeFile": [
     "../docker-compose.yml", // The compose file with the common services
-    "vs-compose.yml"     // Special for the VSCode dev container
   ],
 
   // Required. The name of the service VS Code should connect to once running.
-  "service": "lib",
+  "service": "devcontainer",
 
-  "workspaceFolder": "${localWorkspaceFolder}",
+  "workspaceFolder": "/workspaces/deploy-aws-ecs-service",
 
   // An array of extension IDs that specify the extensions to install inside the
   // container when you first attach to it.
   "extensions": [
+    "github.vscode-pull-request-github",
+    "github.copilot",
+    "mikestead.dotenv"
   ]
 }
