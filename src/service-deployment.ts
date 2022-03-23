@@ -5,8 +5,10 @@ import ECS, {
   Service,
   CreateServiceRequest,
   UpdateServiceRequest,
+  LoadBalancers,
   Integer,
 } from "aws-sdk/clients/ecs";
+import { exit } from "process";
 
 export interface ServiceDeploymentInput {
   name: string;
@@ -14,7 +16,7 @@ export interface ServiceDeploymentInput {
   desiredCount?: Integer;
   template?: string;
   taskDefinition?: string;
-  targetGroupArn?: string;
+  loadBalancers?: LoadBalancers;
   forceNewDeployment?: boolean;
 }
 
@@ -23,21 +25,6 @@ function getClient(): ECS {
     customUserAgent: "icalia-actions/aws-action",
     region: process.env.AWS_DEFAULT_REGION,
   });
-}
-
-function setServiceLoadBalancers(
-  request: CreateServiceRequest,
-  input: ServiceDeploymentInput
-): void {
-  const { targetGroupArn } = input;
-  const { loadBalancers } = request;
-  if (!targetGroupArn || !loadBalancers) return;
-
-  loadBalancers
-    .filter((lb) => !lb["targetGroupArn"])
-    .forEach((lb) => {
-      lb["targetGroupArn"] = targetGroupArn;
-    });
 }
 
 function readServiceDefinitionTemplate(
@@ -56,10 +43,11 @@ function processServiceDeployInput(
   let serviceToDeploy = readServiceDefinitionTemplate(input);
   if (!serviceToDeploy) serviceToDeploy = {} as CreateServiceRequest;
 
-  const { cluster, desiredCount, taskDefinition } = input;
+  const { cluster, desiredCount, taskDefinition, loadBalancers } = input;
   if (cluster) serviceToDeploy.cluster = cluster;
   if (desiredCount) serviceToDeploy.desiredCount = desiredCount;
   if (taskDefinition) serviceToDeploy.taskDefinition = taskDefinition;
+  if (loadBalancers) serviceToDeploy.loadBalancers = loadBalancers;
 
   return serviceToDeploy;
 }
@@ -71,9 +59,7 @@ function processServiceCreateInput(
   let serviceToCreate = processServiceDeployInput(input);
   if (!serviceToCreate) throw new Error("Incomplete service create input");
 
-  setServiceLoadBalancers(serviceToCreate, input);
   if (name) serviceToCreate.serviceName = name;
-
   return serviceToCreate;
 }
 

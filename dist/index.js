@@ -45,11 +45,11 @@ function run() {
             desiredCount,
             template: core_1.getInput("template"),
             taskDefinition: taskDefinitionArn,
-            targetGroupArn: core_1.getInput("target-group-arn"),
+            loadBalancers: JSON.parse(core_1.getInput("load-balancers") || "null"),
             forceNewDeployment: core_1.getInput("force-new-deployment") == "true",
         });
         const { serviceArn, clusterArn } = deployedService;
-        const region = process.env.AWS_DEFAULT_REGION;
+        const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
         core_1.info("Service Update Details:");
         core_1.info(`         Service Name: ${name}`);
         core_1.info(`          Cluster ARN: ${clusterArn}`);
@@ -137,17 +137,6 @@ function getClient() {
         region: process.env.AWS_DEFAULT_REGION,
     });
 }
-function setServiceLoadBalancers(request, input) {
-    const { targetGroupArn } = input;
-    const { loadBalancers } = request;
-    if (!targetGroupArn || !loadBalancers)
-        return;
-    loadBalancers
-        .filter((lb) => !lb["targetGroupArn"])
-        .forEach((lb) => {
-        lb["targetGroupArn"] = targetGroupArn;
-    });
-}
 function readServiceDefinitionTemplate(input) {
     const { template } = input;
     if (!template || !fs.existsSync(template))
@@ -159,13 +148,16 @@ function processServiceDeployInput(input) {
     let serviceToDeploy = readServiceDefinitionTemplate(input);
     if (!serviceToDeploy)
         serviceToDeploy = {};
-    const { cluster, desiredCount, taskDefinition } = input;
+    const { cluster, desiredCount, taskDefinition, loadBalancers } = input;
     if (cluster)
         serviceToDeploy.cluster = cluster;
     if (desiredCount)
         serviceToDeploy.desiredCount = desiredCount;
     if (taskDefinition)
         serviceToDeploy.taskDefinition = taskDefinition;
+    if (loadBalancers)
+        serviceToDeploy.loadBalancers = loadBalancers;
+    console.log("serviceToDeploy", serviceToDeploy);
     return serviceToDeploy;
 }
 function processServiceCreateInput(input) {
@@ -173,7 +165,6 @@ function processServiceCreateInput(input) {
     let serviceToCreate = processServiceDeployInput(input);
     if (!serviceToCreate)
         throw new Error("Incomplete service create input");
-    setServiceLoadBalancers(serviceToCreate, input);
     if (name)
         serviceToCreate.serviceName = name;
     return serviceToCreate;

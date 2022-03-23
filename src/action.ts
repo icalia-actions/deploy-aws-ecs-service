@@ -29,11 +29,11 @@ export async function run(): Promise<number> {
     desiredCount,
     template: getInput("template"),
     taskDefinition: taskDefinitionArn,
-    targetGroupArn: getInput("target-group-arn"),
+    loadBalancers: JSON.parse(getInput("load-balancers") || "null"),
     forceNewDeployment: getInput("force-new-deployment") == "true",
   } as ServiceDeploymentInput);
   const { serviceArn, clusterArn } = deployedService;
-  const region = process.env.AWS_DEFAULT_REGION;
+  const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
 
   info("Service Update Details:");
   info(`         Service Name: ${name}`);
