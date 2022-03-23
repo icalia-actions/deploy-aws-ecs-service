@@ -1,6 +1,6 @@
 {
   "name": "@icalialabs/deploy-aws-ecs-service",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Deploys a Task Definition as a Service in AWS ECS",
   "main": "lib/main.js",
   "scripts": {
