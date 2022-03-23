@@ -36,6 +36,7 @@
   // container when you first attach to it.
   "extensions": [
     "github.vscode-pull-request-github",
-    "github.copilot"
+    "github.copilot",
+    "mikestead.dotenv"
   ]
 }
