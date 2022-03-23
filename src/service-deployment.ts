@@ -144,6 +144,10 @@ export async function deployService(
   input: ServiceDeploymentInput
 ): Promise<Service> {
   const serviceToDeploy = await findService(input);
-  const deployMethod = serviceToDeploy ? updateService : createService;
-  return await deployMethod(input);
+
+  if (!serviceToDeploy || serviceToDeploy.status == "INACTIVE") {
+    return createService(input);
+  }
+
+  return updateService(input);
 }
