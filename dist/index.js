@@ -228,8 +228,10 @@ function createService(input) {
 function deployService(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const serviceToDeploy = yield findService(input);
-        const deployMethod = serviceToDeploy ? updateService : createService;
-        return yield deployMethod(input);
+        if (!serviceToDeploy || serviceToDeploy.status == "INACTIVE") {
+            return createService(input);
+        }
+        return updateService(input);
     });
 }
 exports.deployService = deployService;
