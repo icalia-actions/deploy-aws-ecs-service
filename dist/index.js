@@ -157,7 +157,6 @@ function processServiceDeployInput(input) {
         serviceToDeploy.taskDefinition = taskDefinition;
     if (loadBalancers)
         serviceToDeploy.loadBalancers = loadBalancers;
-    console.log("serviceToDeploy", serviceToDeploy);
     return serviceToDeploy;
 }
 function processServiceCreateInput(input) {
