@@ -14,8 +14,8 @@ services:
         DEVELOPER_USERNAME: ${USER:-you}
     command: yarn test
     volumes:
-      - .:${PWD:-/icalia-actions/deploy-aws-ecs-service}
-      - node_modules:${PWD:-/icalia-actions/deploy-aws-ecs-service}/node_modules
+      - .:/workspaces/deploy-aws-ecs-service
+      - node_modules:/workspaces/deploy-aws-ecs-service
     profiles: # See https://docs.docker.com/compose/profiles
       - ci
 

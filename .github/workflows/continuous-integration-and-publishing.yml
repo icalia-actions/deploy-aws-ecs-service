@@ -13,14 +13,6 @@ on:
     types:
       - published
 
-env:
-  # Configures docker-compose to use Docker CLI to build the image:
-  COMPOSE_DOCKER_CLI_BUILD: 1
-  # Configures Docker CLI to use BuildKit to build the image:
-  DOCKER_BUILDKIT: 1
-  # The workspace directory used by ci-compose:
-  PWD: ${{ github.workspace }}
-
 jobs:
   test_build:
     name: Build Testing Image
