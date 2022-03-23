@@ -16,8 +16,8 @@ inputs:
   desired-count:
     description: The number of instantiations of the specified task definition to place and keep running on your cluster.
     required: false
-  target-group-arn:
-    description: The Target Group ARN for the service to associate
+  load-balancers:
+    description: A JSON array of objects containing "targetGroupArn", "containerName" and "containerPort" (see https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/create-service.html)
     required: false
   template:
     description: The path to the AWS ECS Service template to use

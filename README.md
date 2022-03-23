@@ -33,7 +33,19 @@ Deploys a Task Definition as a Service in AWS ECS
           # *must* be present in the definition, otherwise it will be ignored.
           secrets: '{"MY_SECRET":"some-secret-name"}'
 
-          # If your service must be associated with a load balancer target group,
-          # you can specify a Target Group ARN:
-          target-group-arn: my-target-group-arn
+          # If your service must be associated with any number of load
+          # balancers, you can specify those using a JSON array:
+          load-balancers: |-
+            [
+              {
+                "targetGroupArn":"my-target-group-arn",
+                "containerName":"my-container-name",
+                "containerPort":3000
+              },
+              {
+                "loadBalancerName":"my-classic-load-balancer",
+                "containerName":"my-container-name",
+                "containerPort":3000
+              }
+            ]
 ```
